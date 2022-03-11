@@ -1,4 +1,4 @@
-# (WIP) Cookie, Session, JWT
+# Cookie, Session, JWT
 
 ## Cookie
 - 클라이언트 로컬에 저장되는 키와 값이 들어있는 작은 데이터 파일
@@ -30,14 +30,14 @@
 4. 서버는 클라이언트의 요청에서 쿠키값을 참고하여 비즈니스 로직을 수행한다
   - 예: 로그인 상태 유지
 
-## Session
+## Session 이란
 - 일정 시간동안 같은 사용자(브라우저)로 부터 들어오는 일련의 요구를 하나의 상태로 보고 그 상태를 일정하게 유지시키는 기술
-  - 또는 사용자가 브라우저를 닫아 서버와의 연결을 끝내는 시점
+  - 또는 사용자가 브라우저를 닫아 서버와의 연결을 끝내기까지의 기간
 - session id 세션 아이디
   - 클라이언트를 구분할 수 있는 고유 id
   - 웹 서버에 클라이언트에 대한 정보를 저장한 후 session id 로 접근한다
 
-### 이용 예
+### Session 이용 예
 - authentication 인증
   - 새로고침, 페이지 이동해도 로그인이 풀리지 않고 유지
 
@@ -52,6 +52,8 @@
 
 ## JWT (Json Web Token)
 - Json 포맷을 이용해서 가볍고 자가수용적인 (self-contained) 방식으로 정보를 안전하게 전달하기 위한 토큰
+- 토큰 자체에 정보를 담고 있다 (self-contained)
+- 상태를 저장하고있지 않는다 (stateless)
 
 ### JWT 구조
 - 구조
@@ -70,7 +72,9 @@
       "admin": true
     }
     ```
-  - Signature: 증명 verification (id, passowrd ?????)
+  - Signature: 증명 verification
+    - header 와 payload 를 더한 뒤, 비밀키를 이용해 생성
+    - 즉 signature 는 서버측에서 관리하는 비밀키가 유출되지 않는 한 해독할 수 없다
     ```
     HMACSHA256(
       base64UrlEncode(header) + "." +
@@ -80,57 +84,56 @@
     ```
 
 ### JWT 이용 과정
-- 
+1. 유저가 id, password 를 직접 입력해서 서버에 요청
+2. 서버가 해당 id, password 를 확인하고, secret key를 통해서 액세스 토큰과 리프레시토큰을 발급, 보내준다
+- 액세스 토큰이 유효할 때
+  1. 클라이언트는 이후 서버에 요청할 때마다 헤더에 액세스 토큰을 항상 헤더에 담아서 같이 보낸다
+  2. 서버는 이때 signature를 비밀키로 해독한 다음, 위변조 여부 및 유효 기간 등을 확인한다
+  3. 이상이 없다면 요청에 받게 데이터를 보낸다
+- 액세스 토큰이 만료되면 
+  1. 클라이언트는 리프레시 토큰을 이용해서 새로운 액세스 토큰을 발급 받는다.
 
 
-## 비교
+## 인증 방식 비교 (Session vs JWT)
 ### 서버 부하
-- Cookie
-  
 - Session
-  - -) 서버에 처리를 요구하는 부하와 저장 공간을 필요로 한다
+  - -) 세션 저장소 사용으로 인한 **서버 부하**
 - JWT 
+  - +) 인증 정보에 대한 별도의 저장소가 필요 없다 
+  - -) 토큰의 길이가 길어서 인증요청이 많아지면 **네트워크 부하**가 심해진다
 
 ### 보안
-- Cookie
 - Session
-  - +) 서버에 정보를 저장하기 때문에 보안성이 쿠키보다 우수
+  - +) 개인정보는 세션 아이디에 없고 서버에 저장되어 있기 때문에 안전
+  - +) 서버쪽에서 session 통제 가능
+  - -) 다만 여전히 세션 아이디가 탈취되면 위험하다
 - JWT
+  - +) signature 에 쓰이는 서버의 비밀키가 유출되지 않는한 안정하다
+  - -) payload 자체는 암호화되지 않기 때문에 유저의 중요한 정보는 담을 수 없다
+  - -) 토큰은 한번 발급되면 유효기간 만료까지 계속 사용가능하기 때문에 탈취되면 그동안 대처하기 어렵다
+    - 상태를 저장하지 않기 때문에 한번 만들어지면 제어가 불가능하다
 
-### 기타
-- Cookie
-  
+### 환경
 - Session
-  - (WIP) +) 세션 아이디로 클라이언트를 구분할 수 있다
-
+  - -) 앱 등 브라우저 외의 환경에서는 쿠키를 활용할 수 없다
 - JWT
-
+  - +) JWT 인증은 오늘날 표준 프로토콜 인 OAuth2 로 수행된다
+    - 소셜로그인은 모두 JWT 인증이다
+  - +) 모바일 앱에서도 잘 작동한다
+  - +) 확장성이 우수하다
+### 특정 사용자 관리
+- Session
+  - +) 세션 아이디로 클라이언트를 구분할 수 있다
+  - +) 특정 접근을 강제로 중단시킬수 있다
+- JWT
+  - -) 특정 사용자의 접속을 강제로 만료하기 어렵다
 
 ### References
 - https://jeong-pro.tistory.com/80
 - https://tansfil.tistory.com/58?category=475681
 - https://stupidsecurity.tistory.com/7
-
 - https://jwt.io/introduction
 - https://velog.io/@geunwoobaek/JWT란
-
-
 - https://covenant.tistory.com/201
-  - JWT 인증 과정 굿굿
 - https://inpa.tistory.com/entry/WEB-📚-JWTjson-web-token-란-💯-정리
-  - JWT 인증 과정 굿굿, 이용 과정
 - https://velog.io/@geunwoobaek/JWT란
-  - JWT 간단 명료
-
-- https://cheershennah.tistory.com/135
-  - JWT 인증 과정
-
-- https://88240.tistory.com/190
-  - 기타
-
-- https://tecoble.techcourse.co.kr/post/2021-05-22-cookie-session-jwt/
-  - 3가지 모두 정리
-
-
-- https://jeong-pro.tistory.com/80
-  - 쿠키 vs 세션
