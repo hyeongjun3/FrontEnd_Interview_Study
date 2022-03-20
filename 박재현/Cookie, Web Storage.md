@@ -1,4 +1,4 @@
-Cookie, Web Storage 쿠키와 웹 스토리지
+# Cookie, Web Storage 쿠키와 웹 스토리지
 
 ## Cookie
 - 클라이언트 로컬에 키와 값의 형태로 데이터를 저장하며 서버와의 통신에 이용되는 정보
