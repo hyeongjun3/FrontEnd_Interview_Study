@@ -1,7 +1,7 @@
 # 브라우저에 웹사이트 주소 입력했을 때 일어나는 일
 
 ## 1. 브라우저에서 URI 해석
-scheme:[//[user:password@]host[:port]][/]path[?query][#fragment]
+`scheme:[//[user:password@]host[:port]][/]path[?query][#fragment]`
 - 만약 URI 가 문법에 맞지 않으면 검색어를 입력한 것으로 간주하고 검색엔진으로 검색을 하게 된다
 - 예시 (https://www.naver.com:8080/blog?q=test#tab1)
   - scheme: `https`
@@ -38,7 +38,7 @@ scheme:[//[user:password@]host[:port]][/]path[?query][#fragment]
       - 통신기기 하드웨어에 부여된 고유한 식별번호
       - 변경될 수 없다
   - ARP
-    - (Address Resolution Protocol , 주소 결정 프로토콜
+    - Address Resolution Protocol , 주소 결정 프로토콜
     - OSI 7 계층에서 네트워크 계층 주소와 링크 계층 주소 사이의 변환을 담당
 
 ## 5. 브라우저와 서버가 TCP 소켓 연결
