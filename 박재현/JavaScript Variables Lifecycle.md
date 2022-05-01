@@ -28,6 +28,7 @@ var 키워드로 선언된 변수는 선언 단계와 초기화 단계가 **한
 let, const 키워드로 선언된 변수는 선언 단계와 초기화 단계가 **분리되어** 이루어진다
 1. Declaration Phase
 2. (uninitialized state)
+  - Temporal Dead Zone
   - 변수에 접근하면 RefernceError 발생
   - 스코프에 변수를 등록(선언단계)하지만 초기화 단계는 변수 선언문에 도달했을 때 이루어진다  
 3. Initialization Phase
